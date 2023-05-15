@@ -4,7 +4,6 @@ FILE_PREFIX = "/tmp/IINF_"
 
 from typing import List
 
-from bs4 import BeautifulSoup
 import requests
 
 def open_file(filename: str, check_not_empty=False) -> List[str]:
@@ -24,9 +23,9 @@ def open_file(filename: str, check_not_empty=False) -> List[str]:
 
 def is_free_username(username: str) -> bool:
     response = requests.get(f'https://www.instagram.com/{username}/')
-    soup = BeautifulSoup(response.text, 'lxml')
+    print(f"RESPONSE LENGTH: {len(response.text)}")
 
-    if(len(soup.text) > 73) :
+    if(len(response.text) > 240000) :
         print("%sTAKEN: %s%s" % ('\u001b[31;1m', username, '\u001b[0m'))
         return False
     else:
@@ -51,11 +50,15 @@ if __name__ == '__main__':
                 taken_file.write(username + '\n')
 
     # print all
-    if len(taken_username_list) > 0:
+    if taken_username_list:
         print("Taken:")
         for taken in taken_username_list:
             print("    " + taken)
-    if len(not_taken_username_list) > 0:
+    if not_taken_username_list:
         print("Free:")
         for not_taken in not_taken_username_list:
             print("    " + not_taken)
+
+    # close files
+    not_taken_file.close()
+    taken_file.close()
